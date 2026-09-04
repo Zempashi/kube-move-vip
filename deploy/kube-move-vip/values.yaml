@@ -1,0 +1,128 @@
+# Default values for kube-move-vip.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# This will set the replicaset count more information can be found here: https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
+replicaCount: 1
+
+# This sets the container image more information can be found here: https://kubernetes.io/docs/concepts/containers/images/
+image:
+  repository: ghcr.io/zempashi/kube-move-vip
+  # This sets the pull policy for images.
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+defaultPodOptions:
+  automountServiceAccountToken: true
+
+
+controllers:
+  main:
+    strategy: RollingUpdate
+    containers:
+      main:
+        envFrom:
+          - secretRef:
+              name: kube-move-vip
+
+
+imagePullSecrets: []
+# This is to override the chart name.
+nameOverride: ""
+fullnameOverride: ""
+
+# This section builds out the service account more information can be found here: https://kubernetes.io/docs/concepts/security/service-accounts/
+serviceAccount:
+  # Specifies whether a service account should be created.
+  create: true
+  # Automatically mount a ServiceAccount's API credentials?
+  automount: true
+  # Annotations to add to the service account.
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template.
+  name: ""
+
+# This is for setting Kubernetes Annotations to a Pod.
+# For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
+podAnnotations: {}
+# This is for setting Kubernetes Labels to a Pod.
+# For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
+podLabels: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+configMaps: 
+  main:
+    data:
+      config.yaml: |
+        ---
+        provider:
+          oneprovider:
+            nodes:
+              peche: "775595"
+              pepin: "775596"
+
+persistence:
+  config:
+    type: configMap
+    name: kube-move-vip
+    advancedMounts:
+      main:
+        main:
+          - path: /etc/kube-move-vip/
+            readOnly: true
+
+rbac:
+  roles:
+    main:
+      type: Role
+      rules:
+        - apiGroups: ["coordination.k8s.io"] # "" indicates the core API group
+          resources: ["leases"]
+          verbs: ["get", "watch", "list"]
+    cluster:
+      type: ClusterRole
+      rules:
+        - apiGroups: [""]
+          resources: ["nodes"]
+          verbs: ["get", "watch", "list"]
+
+  bindings:
+    main:
+      type: RoleBinding
+      roleRef:
+        identifier: main
+        kind: Role
+      subjects:
+        - kind: ServiceAccount
+          name: kube-move-vip
+          namespace: kube-system
+    cluster:
+      type: ClusterRoleBinding
+      roleRef:
+        identifier: cluster
+        kind: ClusterRole
+      subjects:
+        - kind: ServiceAccount
+          name: kube-move-vip
+          namespace: kube-system
+
+# Additional volumes on the output Deployment definition.
+volumes: []
+
+# Additional volumeMounts on the output Deployment definition.
+volumeMounts: []
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

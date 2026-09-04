@@ -1,0 +1,20 @@
+[package]
+name = "kube-move-vip"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+anyhow = "1.0.104"
+figment = { version = "0.10.19", features = ["yaml", "env"] }
+futures = { version = "0.3.32",  features = ["async-await"] }
+futures-util = "0.3.32"
+k8s-openapi = { version = "0.22.0", features = ["latest"] }
+kube = { version = "0.93.1", features = ["runtime", "derive", "unstable-runtime" ]}
+reqwest = { version = "0.13.4", features = ["form"]}
+rustls = "0.23.41"
+serde = { version = "1.0.228", features = ["derive"] }
+tokio = { version = "1.50.0", features = ["full"] }
+tracing = "0.1.44"
+tracing-subscriber = "0.3.23"

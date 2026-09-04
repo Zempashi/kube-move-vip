@@ -1,0 +1,14 @@
+{{/* Preprocess values and prepare config file */}}
+{{- define "kube-move-vip.preprocess" -}}
+controllers:
+  main:
+    containers:
+      main:
+        image:
+          tag: {{ .Chart.AppVersion }}
+          {{- toYaml .Values.image | nindent 10 }}
+{{- end -}}
+{{- $_ := merge .Values (include "kube-move-vip.preprocess" . | fromYaml) -}}
+
+{{/* Render the templates */}}
+{{- include "bjw-s.common.loader.all" . }}

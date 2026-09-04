@@ -1,0 +1,10 @@
+---
+provider:
+  oneprovider:
+#    # Could be overrided by KMV_PROVIDER__ONEPROVIDER__API_KEY
+#    api_key:
+#    # Could be overrided by KMV_PROVIDER__ONEPROVIDER__CLIENT_KEY
+#    client_key:
+    nodes:
+      peche: "775595"
+      pepin: "775596"
